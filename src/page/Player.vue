@@ -87,11 +87,11 @@
     </el-dialog>
   </div>
 </template>
+
 <script>
 import requests from '@/page/requests'
 export default {
   extends: requests,
-  name: 'player',
   data () {
     return {
       dialogVisible: false, // 是否显示添加弹框
