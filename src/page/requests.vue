@@ -7,13 +7,13 @@ export default {
     return {
       requests: {
         // 获取列表
-        getList: (...params) => axios.ajax('Index/query', 'get', ...params),
+        getList: (...params) => axios.ajax('Player/Index/query', 'get', ...params),
         // 新增球员
-        addPlayer: (...params) => axios.ajax('Index/add', 'post', ...params),
+        addPlayer: (...params) => axios.ajax('Player/Index/add', 'post', ...params),
         // 删除球员
-        delPlayer: (id) => axios.ajax('Index/del?id=' + id, 'get'),
+        delPlayer: (id) => axios.ajax('Player/Index/del?id=' + id, 'get'),
         // 更新球员信息
-        updatePlayer: (...params) => axios.ajax('Index/edit', 'post', ...params)
+        updatePlayer: (...params) => axios.ajax('Player/Index/edit', 'post', ...params)
       }
     }
   },
