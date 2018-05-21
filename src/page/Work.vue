@@ -9,12 +9,9 @@
       style="width: 100%">
       <el-table-column prop="id" label="编号"></el-table-column>
       <el-table-column prop="name" label="名称"></el-table-column>
-      <el-table-column prop="thumb_url" label="缩略图">
-      	<template slot-scope="scope">
-            <el-tooltip placement="bottom" effect="light">
-                <span slot="content">{{scope.row.thumb_url}}</span>
-                <span>{{scope.row.thumb_url}}</span>
-            </el-tooltip>
+      <el-table-column prop="name" label="缩略图">
+        <template slot-scope="scope">
+            <img style="max-width:100px;max-height:100px;" :src="scope.row.thumb_url_id" />
         </template>
       </el-table-column>
       <el-table-column label="操作">
@@ -36,23 +33,28 @@
         </el-form-item>
         <el-form-item label="缩略图：">
           <el-upload
-			class="avatar-uploader"
-			action="https://jsonplaceholder.typicode.com/posts/"
-			:show-file-list="false"
-			:on-success="handleAvatarSuccess">
-			<img v-if="imageUrl" :src="imageUrl" class="avatar">
-			<i v-else class="el-icon-plus avatar-uploader-icon"></i>
-		  </el-upload>
+      			class="avatar-uploader"
+            name="thumb_url"
+      			action="http://api.jameschun.cc/index.php/Homepage/Index/upload"
+      			:show-file-list="false"
+      			:on-success="handleAvatarSuccess">
+      			<img v-if="imageUrl" :src="imageUrl" class="avatar">
+      			<i v-else class="el-icon-plus avatar-uploader-icon"></i>
+    		  </el-upload>
         </el-form-item>
         <el-form-item label="大图：">
           <el-upload
-			class="avatar-uploader"
-			action="https://jsonplaceholder.typicode.com/posts/"
-			:show-file-list="false"
-			:on-success="handleAvatarSuccess">
-			<img v-if="detailImageUrl" :src="detailImageUrl" class="avatar">
-			<i v-else class="el-icon-plus avatar-uploader-icon"></i>
-		  </el-upload>
+      			class="avatar-uploader"
+            name="detail_url"
+      			action="http://api.jameschun.cc/index.php/Homepage/Index/detail_upload"
+      			:show-file-list="false"
+      			:on-success="handleDetailSuccess">
+      			<img v-if="detailImageUrl" :src="detailImageUrl" class="avatar">
+      			<i v-else class="el-icon-plus avatar-uploader-icon"></i>
+    		  </el-upload>
+        </el-form-item>
+        <el-form-item label="详情">
+          <el-input type="textarea" v-model="addForm.description"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -97,8 +99,9 @@ export default {
       editDialogVisible: false, // 是否显示编辑弹框
       addForm: { // 添加字段
         name: '',
-        city: '',
-        location: ''
+        thumb_url_id: '',
+        description: '',
+        detail_url_id: ''
       },
       editForm: { // 编辑字段
         id: '',
@@ -113,9 +116,15 @@ export default {
     this.getList()
   },
   methods: {
+    // 上传成功
   	handleAvatarSuccess(res, file) {
-		this.imageUrl = URL.createObjectURL(file.raw);
-	},
+  		this.imageUrl = URL.createObjectURL(file.raw);
+      this.addForm.thumb_url_id = res.img_id
+  	},
+    handleDetailSuccess(res, file) {
+  		this.detailImageUrl = URL.createObjectURL(file.raw);
+      this.addForm.detail_url_id = res.img_id
+  	},
     // 查询列表
     getList () {
       this.requests.getWorkList().then((res) => {
@@ -143,23 +152,24 @@ export default {
     },
     // 去保存
     saveAdd () {
-	  let params = {
-	    name: this.addForm.name,
-	    city: this.addForm.city,
-	    location: this.addForm.location
-	  }
-	  this.requests.addPlayer(params).then((res) => {
-	    if (res.status) {
-	      this.$message({
-	        message: res.msg,
-	        type: 'success'
-	      })
-	      this.dialogVisible = false
-	      this.getList()
-	    } else {
-	      this.$message.error(res.msg)
-	    }
-	  })
+  	  let params = {
+  	    name: this.addForm.name,
+  	    thumb_url_id: this.addForm.thumb_url_id,
+  	    description: this.addForm.description,
+  	    detail_url_id: this.addForm.detail_url_id
+  	  }
+  	  this.requests.addWork(params).then((res) => {
+  	    if (res.status) {
+  	      this.$message({
+  	        message: res.msg,
+  	        type: 'success'
+  	      })
+  	      this.dialogVisible = false
+  	      this.getList()
+  	    } else {
+  	      this.$message.error(res.msg)
+  	    }
+  	  })
     },
     // 点击编辑按钮
     toEdit (item) {
@@ -196,9 +206,12 @@ export default {
     handleClose () {
       this.addForm = {
         name: '',
-        city: '',
-        location: ''
+        thumb_url_id: '',
+        description: '',
+        detail_url_id: ''
       }
+      this.imageUrl = ''
+      this.detailImageUrl = ''
     },
     // 关闭编辑弹窗
     editHandleClose () {
@@ -217,8 +230,9 @@ export default {
 .player {
   padding: 50px 20px;
 }
-.pager {
-  margin-top: 20px;
-  text-align: right;
+.avatar {
+  max-width: 100%;
+  max-height: 200px;
 }
+
 </style>
