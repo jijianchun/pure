@@ -6,6 +6,8 @@ import List from '@/page/List'
 
 import Player from '@/page/Player'
 
+import Work from '@/page/Work'
+
 Vue.use(Router)
 
 export default new Router({
@@ -24,6 +26,11 @@ export default new Router({
       path: '/player',
       name: 'Player',
       component: Player
+    },
+    {
+      path: '/work',
+      name: 'Work',
+      component: Work
     }
   ]
 })

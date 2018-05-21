@@ -13,7 +13,9 @@ export default {
         // 删除球员
         delPlayer: (id) => axios.ajax('Player/Index/del?id=' + id, 'get'),
         // 更新球员信息
-        updatePlayer: (...params) => axios.ajax('Player/Index/edit', 'post', ...params)
+        updatePlayer: (...params) => axios.ajax('Player/Index/edit', 'post', ...params),
+        // 获取作品列表
+        getWorkList: () => axios.ajax('Homepage/Index/work_list', 'get')
       }
     }
   },
