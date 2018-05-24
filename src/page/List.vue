@@ -25,10 +25,23 @@
       <el-menu-item index="4"><a href="https://www.ele.me" target="_blank">订单管理</a></el-menu-item>
     </el-menu>
     用户信息： {{userInfo}}
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide" style="background-color:red"><p class="ani" swiper-animate-effect="bounceInDown" swiper-animate-duration=".5s" swiper-animate-delay="0.3s">Slide 1</p></div>
+            <div class="swiper-slide" style="background-color:blue"><p>Slide 2</p></div>
+            <div class="swiper-slide" style="background-color:#ccc"><p>Slide 3</p></div>
+        </div>
+        <!-- 如果需要分页器 -->
+        <div class="swiper-pagination"></div>
+    </div>
   </div>
 </template>
 
 <script>
+import Swiper from 'swiper'
+import 'swiper/dist/css/swiper.min.css'
+import '../assets/style/animate.min.css'
+// import '../assets/js/swiper.animate1.0.3.min.js'
 export default {
   name: 'List',
   data () {
@@ -41,6 +54,26 @@ export default {
       return this.$store.getters.getUser
     }
   },
+  mounted () {
+    new Swiper ('.swiper-container', {
+      direction: 'horizontal',
+      loop: true,
+      on: {
+        init: function(){
+          swiperAnimateCache(this); //隐藏动画元素
+          swiperAnimate(this); //初始化完成开始动画
+        },
+        slideChangeTransitionEnd: function(){
+          swiperAnimate(this); //每个slide切换结束时也运行当前slide动画
+        }
+      },
+
+      // 如果需要分页器
+      pagination: {
+        el: '.swiper-pagination',
+      }
+    })
+  },
   methods: {
     handleSelect (key, keyPath) {
       console.log(key, keyPath)
@@ -49,5 +82,9 @@ export default {
 }
 </script>
 
-<style scoped="">
+<style scoped>
+.swiper-container {
+  width: 600px;
+  height: 300px;
+}
 </style>
