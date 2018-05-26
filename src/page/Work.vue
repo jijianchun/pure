@@ -11,7 +11,7 @@
       <el-table-column prop="name" label="名称"></el-table-column>
       <el-table-column prop="name" label="缩略图">
         <template slot-scope="scope">
-            <img style="max-width:100px;max-height:100px;" :src="scope.row.thumb_url_id" />
+            <img style="max-width:100px;max-height:100px;" :src="scope.row.thumb_img_url" />
         </template>
       </el-table-column>
       <el-table-column label="操作">
@@ -62,21 +62,40 @@
         <el-button type="primary" @click="saveAdd">保 存</el-button>
       </span>
     </el-dialog>
-    <!-- 编辑人员信息弹框 -->
+    <!-- 编辑信息弹框 -->
     <el-dialog
-      title="编辑球员"
+      title="编辑作品"
       :visible.sync="editDialogVisible"
       width="400px"
       @close="editHandleClose">
       <el-form :model="editForm" size="small" label-width="100px">
-        <el-form-item label="球员姓名：" prop="name">
-          <el-input v-model="editForm.name" placeholder="请输入球员姓名"></el-input>
+        <el-form-item label="作品名称：" >
+          <el-input v-model="editForm.name" placeholder="请输入名称"></el-input>
         </el-form-item>
-        <el-form-item label="出生城市：" prop="city">
-          <el-input v-model="editForm.city" placeholder="请输入出生城市"></el-input>
+        <el-form-item label="缩略图：">
+          <el-upload
+      			class="avatar-uploader"
+            name="thumb_url"
+      			action="http://api.jameschun.cc/index.php/Homepage/Index/upload"
+      			:show-file-list="false"
+      			:on-success="handleEditAvatarSuccess">
+      			<img v-if="imageUrlEdit" :src="imageUrlEdit" class="avatar">
+      			<i v-else class="el-icon-plus avatar-uploader-icon"></i>
+    		  </el-upload>
         </el-form-item>
-        <el-form-item label="场上位置：" prop="location">
-          <el-input v-model="editForm.location" placeholder="请输入场上位置"></el-input>
+        <el-form-item label="大图：">
+          <el-upload
+      			class="avatar-uploader"
+            name="detail_url"
+      			action="http://api.jameschun.cc/index.php/Homepage/Index/detail_upload"
+      			:show-file-list="false"
+      			:on-success="handleEditDetailSuccess">
+      			<img v-if="detailImageUrlEdit" :src="detailImageUrlEdit" class="avatar">
+      			<i v-else class="el-icon-plus avatar-uploader-icon"></i>
+    		  </el-upload>
+        </el-form-item>
+        <el-form-item label="详情">
+          <el-input type="textarea" v-model="editForm.description"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -95,6 +114,8 @@ export default {
     return {
       imageUrl: '',
       detailImageUrl: '',
+      imageUrlEdit: '',
+      detailImageUrlEdit: '',
       dialogVisible: false, // 是否显示添加弹框
       editDialogVisible: false, // 是否显示编辑弹框
       addForm: { // 添加字段
@@ -106,8 +127,9 @@ export default {
       editForm: { // 编辑字段
         id: '',
         name: '',
-        city: '',
-        location: ''
+        thumb_url_id: '',
+        description: '',
+        detail_url_id: ''
       },
       tableData: []
     }
@@ -124,6 +146,15 @@ export default {
     handleDetailSuccess(res, file) {
   		this.detailImageUrl = URL.createObjectURL(file.raw);
       this.addForm.detail_url_id = res.img_id
+  	},
+    // 编辑上传成功
+    handleEditAvatarSuccess(res, file) {
+  		this.imageUrlEdit = URL.createObjectURL(file.raw);
+      this.editForm.thumb_url_id = res.img_id
+  	},
+    handleEditDetailSuccess(res, file) {
+  		this.detailImageUrlEdit = URL.createObjectURL(file.raw);
+      this.editForm.detail_url_id = res.img_id
   	},
     // 查询列表
     getList () {
@@ -146,7 +177,7 @@ export default {
         }
       })
     },
-    // 新增用户
+    // 新增
     add () {
       this.dialogVisible = true
     },
@@ -177,19 +208,23 @@ export default {
       this.editForm = {
         id: item.id,
         name: item.name,
-        city: item.city,
-        location: item.location
+        thumb_url_id: item.thumb_url_id,
+        description: item.description,
+        detail_url_id: item.detail_url_id
       }
+      this.imageUrlEdit = item.thumb_img_url
+      this.detailImageUrlEdit = item.detail_img_url
     },
     // 去更新
     saveEdit () {
       let params = {
         id: this.editForm.id,
         name: this.editForm.name,
-        city: this.editForm.city,
-        location: this.editForm.location
+        thumb_url_id: this.editForm.thumb_url_id,
+        description: this.editForm.description,
+        detail_url_id: this.editForm.detail_url_id
       }
-      this.requests.updatePlayer(params).then((res) => {
+      this.requests.updateWork(params).then((res) => {
         if (res.status) {
           this.$message({
             message: res.msg,

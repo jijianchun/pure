@@ -17,7 +17,9 @@ export default {
         // 获取作品列表
         getWorkList: () => axios.ajax('Homepage/Index/work_list', 'get'),
         // 新增作品
-        addWork: (...params) => axios.ajax('Homepage/Index/addWork', 'post', ...params)
+        addWork: (...params) => axios.ajax('Homepage/Index/addWork', 'post', ...params),
+        // 更新作品信息
+        updateWork: (...params) => axios.ajax('Homepage/Index/editWork', 'post', ...params)
       }
     }
   },
